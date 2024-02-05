@@ -16,4 +16,4 @@ if __name__ == "__main__":
     #Argument = ' '.join(sys.argv[1:])
 
     #value_to_send = Argument
-    send_value("00")
+    send_value("[1,2,3,4,5,6,7]")

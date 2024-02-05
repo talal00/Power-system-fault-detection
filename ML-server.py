@@ -71,7 +71,7 @@ def trainML():
     svc_disp = RocCurveDisplay.from_estimator(clf, X_test, y_test)
     return clf
 
-def pridiction(clf,data_val_X,data_val_Y):
+def pridiction(clf,data_val_X):
 
     y_pred=clf.predict(data_val_X)
     print("Validation Score:",clf.score(data_val_X,data_val_Y) )
@@ -82,6 +82,8 @@ def pridiction(clf,data_val_X,data_val_Y):
     svc_disp = RocCurveDisplay.from_estimator(clf, data_val_X, data_val_Y)
 
     print(classification_report(data_val_Y, y_pred))
+
+    return y_pred
 
 
 def start_server():
@@ -109,9 +111,10 @@ def start_server():
         # Run another file here
         #script_to_run = "test.py 'hello world from test file'"
         #run_another_script(script_to_run)
-        data_val_X = 1
-        data_val_Y = 0.8
-        pridiction(clf,data_val_X,data_val_Y)
+        data_val_X = received_value
+        #data_val_Y = 0.8
+        y_pridction = pridiction(clf,data_val_X)
+        print(f"final y_pridction:  {y_pridction}")
 
         client_socket.close()
 
