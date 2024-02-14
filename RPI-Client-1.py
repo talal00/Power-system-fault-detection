@@ -1,5 +1,9 @@
 import socket
-import sys
+import pandas as pd  
+
+data = pd.read_csv('dataset.csv',sep=';').fillna(0)
+
+
 
 def send_value(value):
     host = '127.0.0.1'
@@ -13,7 +17,12 @@ def send_value(value):
     client_socket.close()
 
 if __name__ == "__main__":
+    X=data.iloc[:,1:7]
+    X.describe()
+    Y=data.iloc[:,0]
+    Y.describe()
     #Argument = ' '.join(sys.argv[1:])
 
     #value_to_send = Argument
-    send_value("[1,2,3,4,5,6,7]")
+    print (X)
+    #send_value(X)

@@ -49,7 +49,7 @@ Y.describe()
 # In[7]:
 
 
-#X,data_val_X,Y,data_val_Y = train_test_split(X, Y, train_size=0.8,random_state=0)
+X,data_val_X,Y,data_val_Y = train_test_split(X, Y, train_size=0.8,random_state=0)
 X_train, X_test, y_train, y_test = train_test_split(X, Y, train_size=0.7,random_state=1)
 
 
@@ -93,8 +93,12 @@ def start_server():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind((host, port))
     server_socket.listen(1)
+
+    #trian the ML
     print("Training the ML Server: ")
     clf = trainML()
+
+    #inform user Server listning
     print(f"Server listening on {host}:{port}")
 
     while True:
@@ -102,20 +106,19 @@ def start_server():
         print(f"Connection from {client_address}")
 
         data = client_socket.recv(1024)
+
         if not data:
             break
 
         received_value = data.decode('utf-8')
         print(f"Received value: {received_value}")
 
-        # Run another file here
-        #script_to_run = "test.py 'hello world from test file'"
-        #run_another_script(script_to_run)
         data_val_X = received_value
         #data_val_Y = 0.8
         y_pridction = pridiction(clf,data_val_X)
         print(f"final y_pridction:  {y_pridction}")
 
+        #close Server socket
         client_socket.close()
 
 if __name__ == "__main__":
