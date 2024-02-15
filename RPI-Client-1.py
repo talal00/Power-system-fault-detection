@@ -1,4 +1,7 @@
+import pandas as pd 
 import socket
+
+data = pd.read_csv('dataset.csv',sep=';').fillna(0)
 
 def send_value(value):
     host = '127.0.0.1'
@@ -14,6 +17,8 @@ def send_value(value):
     client_socket.close()
 
 if __name__ == "__main__":
-    t = [0, 1, 2, 3, 4, 5, 6, 7]
+
+
+    t = [1,2,3,4,5,6]
     print(t)
     send_value(t)

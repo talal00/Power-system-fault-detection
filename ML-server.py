@@ -31,8 +31,10 @@ data.describe()
 X=data.iloc[:,1:7]
 Y=data.iloc[:,0]
 
-test = X.iloc[0:10,:]
+test = X.iloc[0:12,0:6]
 print(test)
+
+
 # In[5]:
 
 
@@ -53,6 +55,10 @@ Y.describe()
 X,data_val_X,Y,data_val_Y = train_test_split(X, Y, train_size=0.8,random_state=0)
 X_train, X_test, y_train, y_test = train_test_split(X, Y, train_size=0.7,random_state=1)
 
+print("X trian data and type")
+print(type(X_train))
+print((len(X_train)))
+print(X_train)
 
 # ### Training MLP classifier with three layers MLP classifier with 6neutron x 5neutron x 3neutron
 # 
@@ -72,6 +78,7 @@ def trainML():
     #svc_disp = RocCurveDisplay.from_estimator(clf, X_test, y_test)
     #print(X_test[0,:])
     print("Done Training!")
+    print(clf.coefs_[0].shape)
     return clf
 
 def pridiction(clf,data_val_X):
@@ -80,9 +87,9 @@ def pridiction(clf,data_val_X):
     print("Validation Score:",clf.score(data_val_X,data_val_Y) )
     scores = cross_val_score(clf, data_val_X,data_val_Y, cv=5)
     print("Cross validation Score:", np.mean(scores))
-    metrics.ConfusionMatrixDisplay.from_estimator(clf,data_val_X,data_val_Y)
-    plt.show()
-    svc_disp = RocCurveDisplay.from_estimator(clf, data_val_X, data_val_Y)
+    #metrics.ConfusionMatrixDisplay.from_estimator(clf,data_val_X,data_val_Y)
+    #plt.show()
+    #svc_disp = RocCurveDisplay.from_estimator(clf, data_val_X, data_val_Y)
 
     print(classification_report(data_val_Y, y_pred))
 
@@ -116,9 +123,11 @@ def start_server():
         received_value = data.decode('utf-8')
         print(f"Received value: {received_value}")
 
-        data_val_X = test #received_value
+        data_val_X = test#received_value#test
         #data_val_Y = 0.8
-        
+        print(f"data valX {data_val_X}")
+        print(type(data_val_X))
+        print(len(data_val_X))
         y_pridction = pridiction(clf,data_val_X)
         print(f"final y_pridction:  {y_pridction}")
 
