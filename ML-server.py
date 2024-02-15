@@ -31,7 +31,8 @@ data.describe()
 X=data.iloc[:,1:7]
 Y=data.iloc[:,0]
 
-
+test = X.iloc[0:10,:]
+print(test)
 # In[5]:
 
 
@@ -66,9 +67,11 @@ def trainML():
     print("Test Score:", clf.score(X_test,y_test))
     scores = cross_val_score(clf, X_test, y_test, cv=5)
     print("CV Score:", np.mean(scores))
-    metrics.ConfusionMatrixDisplay.from_estimator(clf,X_test,y_test)
-    plt.show()
-    svc_disp = RocCurveDisplay.from_estimator(clf, X_test, y_test)
+    #metrics.ConfusionMatrixDisplay.from_estimator(clf,X_test,y_test)
+    #plt.show()
+    #svc_disp = RocCurveDisplay.from_estimator(clf, X_test, y_test)
+    #print(X_test[0,:])
+    print("Done Training!")
     return clf
 
 def pridiction(clf,data_val_X):
@@ -113,8 +116,9 @@ def start_server():
         received_value = data.decode('utf-8')
         print(f"Received value: {received_value}")
 
-        data_val_X = received_value
+        data_val_X = test #received_value
         #data_val_Y = 0.8
+        
         y_pridction = pridiction(clf,data_val_X)
         print(f"final y_pridction:  {y_pridction}")
 
