@@ -1,7 +1,9 @@
+# Start
+
 import pandas as pd  
 import numpy as np  
-import matplotlib.pyplot as plt  
-import seaborn as sns
+#import matplotlib.pyplot as plt  
+#import seaborn as sns
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import cross_val_score
 from sklearn import metrics
@@ -31,7 +33,7 @@ data.describe()
 X=data.iloc[:,1:7]
 Y=data.iloc[:,0]
 
-test = X.iloc[0:12,0:6]
+test = X.iloc[0:12,:]
 print(test)
 
 
@@ -84,14 +86,14 @@ def trainML():
 def pridiction(clf,data_val_X):
 
     y_pred=clf.predict(data_val_X)
-    print("Validation Score:",clf.score(data_val_X,data_val_Y) )
-    scores = cross_val_score(clf, data_val_X,data_val_Y, cv=5)
+    print("Validation Score:",clf.score(data_val_X,y_pred) )
+    scores = cross_val_score(clf, data_val_X,y_pred, cv=5)
     print("Cross validation Score:", np.mean(scores))
     #metrics.ConfusionMatrixDisplay.from_estimator(clf,data_val_X,data_val_Y)
     #plt.show()
     #svc_disp = RocCurveDisplay.from_estimator(clf, data_val_X, data_val_Y)
 
-    print(classification_report(data_val_Y, y_pred))
+    #print(classification_report(data_val_Y, y_pred))
 
     return y_pred
 
@@ -123,12 +125,12 @@ def start_server():
         received_value = data.decode('utf-8')
         print(f"Received value: {received_value}")
 
-        data_val_X = test#received_value#test
+        data_val_X = test #received_value#test
         #data_val_Y = 0.8
         print(f"data valX {data_val_X}")
         print(type(data_val_X))
         print(len(data_val_X))
-        y_pridction = pridiction(clf,data_val_X)
+        y_pridction = pridiction(clf,test)
         print(f"final y_pridction:  {y_pridction}")
 
         #close Server socket
@@ -136,3 +138,4 @@ def start_server():
 
 if __name__ == "__main__":
     start_server()
+# %%
