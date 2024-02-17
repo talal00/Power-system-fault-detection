@@ -117,19 +117,18 @@ def start_server():
         client_socket, client_address = server_socket.accept()
         print(f"Connection from {client_address}")
 
-        received_value  = client_socket.recv(1024)
+        received_value = client_socket.recv(1024)
 
         if not received_value:
             break
 
         print(f"Received value: {received_value}")
         print(type(received_value))
-        columns = ['Ia', 'Ib', 'Ic', 'Va', 'Vb', 'Vc']
 
-    # Create a Pandas DataFrame
-        
-        data_val_X = pd.DataFrame(received_value, columns=columns)
+        # Convert bytes to NumPy array and then to DataFrame
+        data_val_X = pd.DataFrame(np.frombuffer(received_value, dtype=int).reshape(-1, 6), columns=['Ia', 'Ib', 'Ic', 'Va', 'Vb', 'Vc'])
         print("Pandas DataFrame: ", data_val_X)
+
         #data_val_Y = 0.8
         print(f"data valX {data_val_X}")
         print(type(data_val_X))
