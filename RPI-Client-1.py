@@ -1,5 +1,6 @@
 import pandas as pd 
 import socket
+import numpy as np
 
 data = pd.read_csv('dataset.csv',sep=';').fillna(0)
 
@@ -11,14 +12,17 @@ def send_value(value):
     client_socket.connect((host, port))
 
     # Convert list to string and send
-    value_str = ','.join(map(str, value)) 
-    client_socket.send(value_str.encode('utf-8'))
+    #value_str = ','.join(map(int, value)) 
+    client_socket.send(t)
 
     client_socket.close()
 
 if __name__ == "__main__":
 
 
-    t = [1,2,3,4,5,6]
+    t = np.array([[1,2,3,4,5,6],
+                 [3,10,5,6,70,1],
+                 [20,12,25,15,13,0]],dtype=int)
+
     print(t)
     send_value(t)
