@@ -1,7 +1,9 @@
+# Start
+
 import pandas as pd  
 import numpy as np  
-import matplotlib.pyplot as plt  
-import seaborn as sns
+#import matplotlib.pyplot as plt  
+#import seaborn as sns
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import cross_val_score
 from sklearn import metrics
@@ -31,7 +33,7 @@ data.describe()
 X=data.iloc[:,1:7]
 Y=data.iloc[:,0]
 
-test = X.iloc[0:12,0:6]
+test = X.iloc[0:12,:]
 print(test)
 
 
@@ -84,16 +86,16 @@ def trainML():
 def pridiction(clf,data_val_X):
 
     y_pred=clf.predict(data_val_X)
-    print("Validation Score:",clf.score(data_val_X,data_val_Y) )
-    scores = cross_val_score(clf, data_val_X,data_val_Y, cv=5)
+    print("Validation Score:",clf.score(data_val_X,y_pred) )
+    scores = cross_val_score(clf, data_val_X,y_pred, cv=5)
     print("Cross validation Score:", np.mean(scores))
     #metrics.ConfusionMatrixDisplay.from_estimator(clf,data_val_X,data_val_Y)
     #plt.show()
     #svc_disp = RocCurveDisplay.from_estimator(clf, data_val_X, data_val_Y)
-
-    print(classification_report(data_val_Y, y_pred))
+    #print(classification_report(data_val_Y, y_pred))
 
     return y_pred
+
 
 
 def start_server():
@@ -115,24 +117,30 @@ def start_server():
         client_socket, client_address = server_socket.accept()
         print(f"Connection from {client_address}")
 
-        data = client_socket.recv(1024)
+        received_value  = client_socket.recv(1024)
 
-        if not data:
+        if not received_value:
             break
 
-        received_value = data.decode('utf-8')
         print(f"Received value: {received_value}")
+        print(type(received_value))
+        columns = ['Ia', 'Ib', 'Ic', 'Va', 'Vb', 'Vc']
 
-        data_val_X = test#received_value#test
+    # Create a Pandas DataFrame
+        
+        data_val_X = pd.DataFrame(received_value, columns=columns)
+        print("Pandas DataFrame: ", data_val_X)
         #data_val_Y = 0.8
         print(f"data valX {data_val_X}")
         print(type(data_val_X))
         print(len(data_val_X))
         y_pridction = pridiction(clf,data_val_X)
         print(f"final y_pridction:  {y_pridction}")
+        print(f"X_values:  {data_val_X}")
 
         #close Server socket
         client_socket.close()
 
 if __name__ == "__main__":
     start_server()
+# %%
