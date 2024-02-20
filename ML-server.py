@@ -33,9 +33,6 @@ data.describe()
 X=data.iloc[:,1:7]
 Y=data.iloc[:,0]
 
-test = X.iloc[0:12,:]
-print(test)
-
 
 # In[5]:
 
@@ -57,11 +54,6 @@ Y.describe()
 X,data_val_X,Y,data_val_Y = train_test_split(X, Y, train_size=0.8,random_state=0)
 X_train, X_test, y_train, y_test = train_test_split(X, Y, train_size=0.7,random_state=1)
 
-print("X trian data and type")
-print(type(X_train))
-print((len(X_train)))
-print(X_train)
-
 # ### Training MLP classifier with three layers MLP classifier with 6neutron x 5neutron x 3neutron
 # 
 # The model acheived an accuracy of upto 99% and the confusion matrix also shows the number of True positive = 10935 and True negative = 495, against False positive =12 and False negative = 80
@@ -75,12 +67,9 @@ def trainML():
     print("Test Score:", clf.score(X_test,y_test))
     scores = cross_val_score(clf, X_test, y_test, cv=5)
     print("CV Score:", np.mean(scores))
-    #metrics.ConfusionMatrixDisplay.from_estimator(clf,X_test,y_test)
-    #plt.show()
-    #svc_disp = RocCurveDisplay.from_estimator(clf, X_test, y_test)
-    #print(X_test[0,:])
+    
     print("Done Training!")
-    print(clf.coefs_[0].shape)
+
     return clf
 
 def pridiction(clf,data_val_X):
@@ -89,10 +78,6 @@ def pridiction(clf,data_val_X):
     print("Validation Score:",clf.score(data_val_X,y_pred) )
     scores = cross_val_score(clf, data_val_X,y_pred, cv=5)
     print("Cross validation Score:", np.mean(scores))
-    #metrics.ConfusionMatrixDisplay.from_estimator(clf,data_val_X,data_val_Y)
-    #plt.show()
-    #svc_disp = RocCurveDisplay.from_estimator(clf, data_val_X, data_val_Y)
-    #print(classification_report(data_val_Y, y_pred))
 
     return y_pred
 
@@ -117,26 +102,20 @@ def start_server():
         client_socket, client_address = server_socket.accept()
         print(f"Connection from {client_address}")
 
-        received_value  = client_socket.recv(1024)
+        received_value = client_socket.recv(1024)
 
         if not received_value:
             break
 
-        print(f"Received value: {received_value}")
-        print(type(received_value))
-        columns = ['Ia', 'Ib', 'Ic', 'Va', 'Vb', 'Vc']
+        #print(f"Received value: {received_value}")
+        #print(type(received_value))
 
-    # Create a Pandas DataFrame
-        
-        data_val_X = pd.DataFrame(received_value, columns=columns)
-        print("Pandas DataFrame: ", data_val_X)
-        #data_val_Y = 0.8
-        print(f"data valX {data_val_X}")
-        print(type(data_val_X))
-        print(len(data_val_X))
+        # Convert bytes to NumPy array and then to DataFrame
+        data_val_X = pd.DataFrame(np.frombuffer(received_value, dtype=int).reshape(-1, 6), columns=['Ia', 'Ib', 'Ic', 'Va', 'Vb', 'Vc'])
+        #print("Pandas DataFrame: ", data_val_X)
+
         y_pridction = pridiction(clf,data_val_X)
         print(f"final y_pridction:  {y_pridction}")
-        print(f"X_values:  {data_val_X}")
 
         #close Server socket
         client_socket.close()
