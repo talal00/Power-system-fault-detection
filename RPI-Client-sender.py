@@ -4,13 +4,13 @@ import pandas as pd
 import multiprocessing
 
 def receive_array(host, port):
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect((host, port))
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    client_socket.sendto((host, port))
     print ("Opening Socket Server")
-    #client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    #client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     #client_socket.bind((host, port))
     #client_socket.listen(1)
-    #conn, addr = client_socket.accept()
+    #conn, addr = client_socket.recvfrom()
     i=0
     while i==0:
 
@@ -18,7 +18,7 @@ def receive_array(host, port):
 
         try:
 
-            data = client_socket.recv(4096)
+            data = client_socket.recvfrom(4096)
             if not data:
                 client_socket.close()
                 continue
@@ -43,8 +43,8 @@ def receive_array(host, port):
     return data
 
 def send_array(host, port, data):
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.connect((host, port))
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    server_socket.sendto((host, port))
 
     print(f"Listening for connections on {host}:{port}")
 
@@ -61,7 +61,7 @@ def send_array(host, port, data):
             # Convert the NumPy array to bytes
             byte_data = integer_to_send.tobytes()
     
-   #conn, addr = server_socket.accept()
+   #conn, addr = server_socket.recvfrom()
    # print(f"Received connection from {addr}")
             try:
                 while True:

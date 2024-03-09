@@ -82,8 +82,8 @@ def pridiction(clf,data_val_X):
     return y_pred
 
 def send_array(host, port, array):
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect((host, port))
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    client_socket.sendto((host, port))
     array_bytes = array.tobytes()
     client_socket.send(array_bytes)
     client_socket.close()
@@ -94,7 +94,7 @@ def start_server():
     host = '192.168.2.2'
     port = 12345
 
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server_socket.bind((host, port))
     server_socket.listen(1)
 
@@ -106,7 +106,7 @@ def start_server():
     print(f"Server listening on {host}:{port}")
 
     while True:
-        client_socket, client_address = server_socket.accept()
+        client_socket, client_address = server_socket.recvfrom()
         print(f"Connection from {client_address}")
 
         received_value = client_socket.recv(1024)
