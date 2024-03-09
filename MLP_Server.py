@@ -81,7 +81,7 @@ def trainML():
     return clf
 
 def pridiction(clf,data_val_X):
-
+    data_val_X= scaler.transform(data_val_X)
     y_pred=clf.predict(data_val_X)
     print("Validation Score:",clf.score(data_val_X,y_pred) )
     scores = cross_val_score(clf, data_val_X,y_pred, cv=5)
