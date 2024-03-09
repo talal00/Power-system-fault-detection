@@ -8,8 +8,8 @@ def receive_array(host, port, queue):
     while True:
         try:
 
-            client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            client_socket.connect((host, port))
+            client_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            client_socket.sendto((host, port))
 
             print(f"Connected to {host}:{port}")
 
@@ -40,8 +40,8 @@ def receive_array(host, port, queue):
             client_socket.close()
 
 def send_array(host, port, queue):
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_socket.connect((host, port))
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    server_socket.sendto((host, port))
 
     #server_socket.bind((host, port))
     #server_socket.listen(1)

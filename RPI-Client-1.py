@@ -1,28 +1,55 @@
-import pandas as pd 
 import socket
 import numpy as np
+import pandas as pd
 
-data = pd.read_csv('dataset.csv', sep=';').fillna(0)
+def receive_array(host, port):
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((host, port))
+    server_socket.listen(1)
 
-def send_value(value):
-    host = '127.0.0.1'
-    port = 12345
+    print(f"Listening for array data on {host}:{port}")
 
+    conn, addr = server_socket.accept()
+    print(f"Received connection from {addr}")
+
+    data = conn.recv(4096)
+    if not data:
+        return None
+
+    # Convert received bytes back to NumPy array
+    received_array = pd.DataFrame(np.frombuffer(data, dtype=int).reshape(-1, 6), columns=['Ia', 'Ib', 'Ic', 'Va', 'Vb', 'Vc'])
+
+    print("Received array:")
+    print(received_array)
+
+    conn.close()
+    server_socket.close()
+
+    return received_array
+
+def send_array(host, port, array):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((host, port))
 
     # Convert NumPy array to bytes and send
-    value_bytes = value.tobytes()
-    client_socket.send(value_bytes)
+    array_bytes = array.tobytes()
+    client_socket.send(array_bytes)
 
     client_socket.close()
 
 if __name__ == "__main__":
-    t = np.array([[1, 2, 3, 4, 5, 6],
-                  [3, 10, 5, 6, 70, 1],
-                  [4, 11, 15, 16, 76, 4],
-                  [0, 0, 0, 0, 0, 1],
-                  [20, 12, 25, 15, 13, 0]], dtype=int)
+    # Host and port for receiving the array
+    receive_host = '127.0.0.1'
+    receive_port = 12345
 
-    print(t)
-    send_value(t)
+    # Host and port for sending the received array
+    send_host = '127.0.0.1'
+    send_port = 12346
+
+    while True:
+        # Receive the array
+        received_array = receive_array(receive_host, receive_port)
+
+        if received_array is not None:
+            # Send the received array
+            send_array(send_host, send_port, received_array)
