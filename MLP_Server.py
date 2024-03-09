@@ -10,6 +10,7 @@ from sklearn import metrics
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import RocCurveDisplay, classification_report
 from sklearn.neural_network import MLPClassifier
+from sklearn.preprocessing import StandardScaler
 #server imports
 import socket
 import os
@@ -34,6 +35,7 @@ data.describe()
 X=data.iloc[:,1:7]
 print(X)
 Y=data.iloc[:,0]
+Y = Y.replace(0, -1)
 print(Y)
 
 # In[5]:
@@ -56,6 +58,10 @@ Y.describe()
 X,data_val_X,Y,data_val_Y = train_test_split(X, Y, train_size=0.8,random_state=0)
 X_train, X_test, y_train, y_test = train_test_split(X, Y, train_size=0.7,random_state=1)
 
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+data_val_X= scaler.transform(data_val_X)
+
 # ### Training MLP classifier with three layers MLP classifier with 6neutron x 5neutron x 3neutron
 # 
 # The model acheived an accuracy of upto 99% and the confusion matrix also shows the number of True positive = 10935 and True negative = 495, against False positive =12 and False negative = 80
@@ -63,7 +69,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, Y, train_size=0.7,random_
 # In[8]:
 
 def trainML():
-    clf = MLPClassifier(activation='relu', hidden_layer_sizes=(6,5,4,6),max_iter=1000)
+    clf = MLPClassifier(activation='relu',solver="adam",epsilon=1e-8, hidden_layer_sizes=(6,5,3),verbose=False,max_iter=1000, learning_rate="constant")
     clf.fit(X_train, y_train)
     print("Training Score:", clf.score(X_train,y_train))
     print("Test Score:", clf.score(X_test,y_test))
@@ -88,12 +94,12 @@ def send_array(host, port, array):
     #client_socket.connect((host, port))
     host = '192.168.2.1'
     port = 12347
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server_socket.bind((host, port))
     server_socket.listen(1)
     print(f"Server listening on {host}:{port}")
 
-    client_socket, client_address = server_socket.accept()
+    client_socket, client_address = server_socket.sendto()
     print(f"Accepted connection from {client_address}")
     
     array_bytes = array #.tobytes()
@@ -111,7 +117,7 @@ def start_server():
 
     port = 12345
 
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server_socket.bind((host, port))
     server_socket.listen(1)
 
@@ -124,7 +130,7 @@ def start_server():
     received_data_list=[]
 
     while True:
-        client_socket, client_address = server_socket.accept()
+        client_socket, client_address = server_socket.recvfrom()
         print(f"Connection from {client_address}")
 
         for _ in range(10):
