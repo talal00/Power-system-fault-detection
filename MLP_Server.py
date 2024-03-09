@@ -53,7 +53,7 @@ Y.describe()
 # ### Splitting data into train, test, and predict dataset
 
 # In[7]:
-
+scaler = StandardScaler()
 
 X,data_val_X,Y,data_val_Y = train_test_split(X, Y, train_size=0.8,random_state=0)
 X_train, X_test, y_train, y_test = train_test_split(X, Y, train_size=0.7,random_state=1)
@@ -96,7 +96,7 @@ def send_array(host, port, array):
     port = 12347
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server_socket.bind((host, port))
-    server_socket.listen(1)
+    #server_socket.listen(1)
     print(f"Server listening on {host}:{port}")
 
     client_socket, client_address = server_socket.sendto()
@@ -119,7 +119,7 @@ def start_server():
 
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     server_socket.bind((host, port))
-    server_socket.listen(1)
+    #server_socket.listen(1)
 
     
     #server_socket.connect((host,port))
@@ -130,7 +130,7 @@ def start_server():
     received_data_list=[]
 
     while True:
-        client_socket, client_address = server_socket.recvfrom()
+        client_socket, client_address = server_socket.recvfrom(4096)
         print(f"Connection from {client_address}")
 
         for _ in range(10):
